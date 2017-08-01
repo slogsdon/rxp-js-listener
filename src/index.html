@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>C&C Testing Tool</title>
+      <style>
+         iframe {
+			 width: 600px;
+			 height: 600px;
+			 margin: 0 auto;
+			 background-color: #777;
+         }
+         button {
+			box-shadow: 0 5px 5px #cbcbcb;
+         }
+         #inner-wrapper {
+			 padding-top: 50px;
+			 display: inline-block;
+			 width: 50%;
+         }
+         #div2 {
+			 padding-top: 30px;
+			 display: inline-block;
+         }
+		.error {
+			color: red;
+		}
+      </style>
+
+      <link rel="stylesheet" href="https://yui-s.yahooapis.com/pure/0.6.0/pure-min.css">
+      <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/json2/20110223/json2.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script>
+         $( document ).ready(function() {
+         	var win = document.getElementById("iframe").contentWindow;
+
+         	document.forms.form.onsubmit = function() {
+         		var message = {
+         				action:  $("input[name='action']").val(), // string
+         				payload: {
+         					pas_ccnum: $("input[name='pas_ccnum']").val(),
+         					pas_ccname:  $("input[name='pas_ccname']").val(),
+         					pas_ccmonth:  $("input[name='pas_ccmonth']").val(),
+         					pas_ccyear:  $("input[name='pas_ccyear']").val(),
+         					pas_cccvc: $("input[name='pas_cccvc']").val()
+         				}
+         		}
+
+         		win.postMessage(
+         				JSON.stringify(message),
+         				"*"
+         		)
+
+         		return false
+         	}
+
+			clearFields = function() {
+				$('.error').empty();
+			}
+
+			listenMessage = function (msgEvent) {
+				console.log(msgEvent.data);
+				message = JSON.parse(msgEvent.data);
+
+				action = message.action || '';
+				payload = message.payload || {};
+
+				if(action === "action-error") {
+					$('#action-error').text(payload);
+				}
+
+				if(action === "form-field-errors") {
+					for(i = 0; i < payload.length; i++) {
+						$('#' + payload[i].field + '-error').text(payload[i].errorMessage);
+					}
+				}
+			}
+
+			if (window.addEventListener) {
+				window.addEventListener("message", listenMessage, false);
+			} else {
+				window.attachEvent("onmessage", listenMessage);
+			}
+         });
+      </script>
+   </head>
+   </body>
+   <div id="wrapper">
+      <div id=inner-wrapper>
+         <div>
+            <form class="pure-form pure-form-aligned" name="form" style="width:50%; margin:0 auto;">
+               <fieldset>
+                  <div class="pure-control-group">
+                     <label for="action">Action:</label>
+                     <input name="action" id="action" type="text" value="populate-form-fields">
+                  </div>
+                  <div class="pure-control-group">
+                     <span class="error" id="action-error"></span>
+                  </div>
+                  <div class="pure-control-group">
+                     <label for="pas_ccnum">Cardnumber:</label>
+                     <input name="pas_ccnum" id="pas_ccnum" type="text" value="4242424242424242">
+                  </div>
+                  <div class="pure-control-group">
+                     <span class="error" id="pas_ccnum-error"></span>
+                  </div>
+                  <div class="pure-control-group">
+                     <label for="pas_ccname">Cardholder Name:</label>
+                     <input name="pas_ccname" id="pas_ccname" type="text" value="John Doe">
+                  </div>
+                  <div class="pure-control-group">
+                     <span class="error" id="pas_ccname-error"></span>
+                  </div>
+                  <div class="pure-control-group">
+                     <label for="pas_ccmonth">Expiry month:</label>
+                     <input name="pas_ccmonth" id="pas_ccmonth" type="text" value="11">
+                  </div>
+                  <div class="pure-control-group">
+                     <label for="pas_ccyear">Expiry year:</label>
+                     <input name="pas_ccyear" id="pas_ccyear" type="text" value="18">
+                  </div>
+                  <div class="pure-control-group">
+                     <span class="error" id="pas_expiry-error"></span>
+                  </div>
+                  <div class="pure-control-group">
+                     <label for="pas_cccvc">Security Code:</label>
+                     <input id="pas_cccvc" name="pas_cccvc" type="text" value="123">
+                  </div>
+                  <div class="pure-control-group">
+                     <span class="error" id="pas_cccvc-error"></span>
+                  </div>
+                  <div class="pure-controls">
+                     <button type="submit" class="pure-button pure-button-primary" id = "submit" style="background-color:#e5891e" onclick="clearFields()">Submit</button>
+                  </div>
+               </fieldset>
+            </form>
+		        <button type="submit" class="pure-button pure-button-primary" id = "refresh" style="background-color:#e5891e" onclick="location.href='test.js.html'">Refresh</button>
+         </div>
+      </div>
+      <div id="div2">
+		     <iframe id="iframe" style="visibility:visible" src="test.iframe.html">
+         </iframe>
+      </div>
+   </div>
+   </body>
+</html>
