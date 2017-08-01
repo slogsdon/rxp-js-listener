@@ -45,8 +45,9 @@
                 $('[name="ORDER_ID"]').val(),
                 '',
                 $('[name="CURRENCY"]').val(),
-//                 $('[name="PAYER_REF"]').val(),
+                $('[name="CUST_NUM"]').val(),
 //                 $('[name="PMT_REF"]').val(),
+                "",
             ];
             $('[name="SHA1HASH"]').val(sha1(sha1(toHash.join('.')) + '.secret'));
 
