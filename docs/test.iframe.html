@@ -50,7 +50,7 @@
             ];
             $('[name="SHA1HASH"]').val(sha1(sha1(toHash.join('.')) + '.secret'));
 
-            //$('#form1').submit();
+            $('#form1').submit();
         });
     </script>
     <form id="form1" method="post" action="https://pay.sandbox.realexpayments.com/pay">
